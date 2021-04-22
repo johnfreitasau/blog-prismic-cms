@@ -3,9 +3,8 @@ import { RichText } from 'prismic-dom';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
-import { POINT_CONVERSION_HYBRID } from 'node:constants';
+import { FiUser, FiCalendar } from 'react-icons/fi';
 import { getPrismicClient } from '../services/prismic';
-
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
@@ -31,8 +30,8 @@ interface HomeProps {
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
   const [posts, setPosts] = useState<PostPagination>(postsPagination);
 
-  console.log('POSTS_PAGINATION:', postsPagination);
-  console.log('NEXT_PAGE:', postsPagination.next_page);
+  // console.log('POSTS_PAGINATION:', postsPagination);
+  // console.log('NEXT_PAGE:', postsPagination.next_page);
 
   const handleLoadMorePosts = useCallback(async () => {
     const data = await fetch(posts.next_page).then(response => response.json());
@@ -60,25 +59,32 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
   }, [posts]);
 
   return (
-    <>
+    <div className={styles.container}>
+      <img src="/logo.svg" alt="Logo" />
       {posts.results.map(post => (
         <Link href={`/posts/${post.uid}`} key={post.uid}>
-          <div>
-            <a>
-              <strong>{post.data?.title}</strong>
-              <p>{post.data?.subtitle}</p>
+          <a className={styles.post}>
+            <strong>{post.data?.title}</strong>
+            <p>{post.data?.subtitle}</p>
+            <div>
+              <FiCalendar size={20} />
               <time>{post.first_publication_date}</time>
+              <FiUser size={20} />
               <p>{post.data?.author}</p>
-            </a>
-          </div>
+            </div>
+          </a>
         </Link>
       ))}
       {posts.next_page && (
-        <button type="button" onClick={handleLoadMorePosts}>
-          Carregar mais
+        <button
+          type="button"
+          className={styles.loadMoreButton}
+          onClick={handleLoadMorePosts}
+        >
+          Load more
         </button>
       )}
-    </>
+    </div>
   );
 }
 
