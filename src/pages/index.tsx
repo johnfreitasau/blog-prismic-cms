@@ -1,9 +1,12 @@
 import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
 import { GetStaticProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { FiUser, FiCalendar } from 'react-icons/fi';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import { getPrismicClient } from '../services/prismic';
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
@@ -38,13 +41,13 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
 
     const results = data.results.map(post => ({
       uid: post.uid,
-      first_publication_date: new Date(
-        post.first_publication_date
-      ).toLocaleDateString('en-AU', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }),
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        'eeee',
+        {
+          locale: ptBR,
+        }
+      ),
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -59,32 +62,37 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
   }, [posts]);
 
   return (
-    <div className={styles.container}>
-      <img src="/logo.svg" alt="Logo" />
-      {posts.results.map(post => (
-        <Link href={`/posts/${post.uid}`} key={post.uid}>
-          <a className={styles.post}>
-            <strong>{post.data?.title}</strong>
-            <p>{post.data?.subtitle}</p>
-            <div>
-              <FiCalendar size={20} />
-              <time>{post.first_publication_date}</time>
-              <FiUser size={20} />
-              <p>{post.data?.author}</p>
-            </div>
-          </a>
-        </Link>
-      ))}
-      {posts.next_page && (
-        <button
-          type="button"
-          className={styles.loadMoreButton}
-          onClick={handleLoadMorePosts}
-        >
-          Load more
-        </button>
-      )}
-    </div>
+    <>
+      <Head>
+        <title>Posts</title>
+      </Head>
+      <div className={styles.container}>
+        <img src="/logo.svg" alt="logo" />
+        {posts.results.map(post => (
+          <Link href={`/post/${post.uid}`} key={post.uid}>
+            <a className={styles.post}>
+              <strong>{post.data?.title}</strong>
+              <p>{post.data?.subtitle}</p>
+              <div>
+                <FiCalendar size={20} />
+                <time>{post.first_publication_date}</time>
+                <FiUser size={20} />
+                <p>{post.data?.author}</p>
+              </div>
+            </a>
+          </Link>
+        ))}
+        {posts.next_page && (
+          <button
+            type="button"
+            className={styles.loadMoreButton}
+            onClick={handleLoadMorePosts}
+          >
+            Load more
+          </button>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -101,13 +109,20 @@ export const getStaticProps: GetStaticProps = async () => {
   const results = postsResponse.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: new Date(
-        post.first_publication_date
-      ).toLocaleDateString('en-AU', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }),
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        'eeee',
+        {
+          locale: ptBR,
+        }
+      ),
+      // first_publication_date: new Date(
+      //   post.first_publication_date
+      // ).toLocaleDateString('en-AU', {
+      //   day: '2-digit',
+      //   month: 'long',
+      //   year: 'numeric',
+      // }),
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
