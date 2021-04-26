@@ -43,11 +43,9 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
       uid: post.uid,
       first_publication_date: format(
         new Date(post.first_publication_date),
-        'eeee',
-        {
-          locale: ptBR,
-        }
+        'dd MMM yyyy'
       ),
+
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -75,7 +73,9 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
               <p>{post.data?.subtitle}</p>
               <div>
                 <FiCalendar size={20} />
-                <time>{post.first_publication_date}</time>
+                <time>
+                  {format(new Date(post.first_publication_date), 'dd MMM yyyy')}
+                </time>
                 <FiUser size={20} />
                 <p>{post.data?.author}</p>
               </div>
@@ -110,14 +110,6 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
       uid: post.uid,
       first_publication_date: post.first_publication_date,
-
-      // first_publication_date: new Date(
-      //   post.first_publication_date
-      // ).toLocaleDateString('en-AU', {
-      //   day: '2-digit',
-      //   month: 'long',
-      //   year: 'numeric',
-      // }),
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -135,3 +127,6 @@ export const getStaticProps: GetStaticProps = async () => {
     },
   };
 };
+function useMemo(arg0: () => string, arg1: any[]) {
+  throw new Error('Function not implemented.');
+}

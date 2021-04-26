@@ -39,6 +39,15 @@ export default function Post({ post }: PostProps): JSX.Element {
     return format(new Date(post.first_publication_date), 'dd MMM yyyy');
   }, [post.first_publication_date]);
 
+  const minutesReading = useMemo(() => {
+    const total = post.data.content.reduce(
+      (acc, content) => RichText.asText(content.body).split(/\W/).length + acc,
+      0
+    );
+
+    return `${Math.ceil(total / 200)} mins`;
+  }, [post]);
+
   if (router.isFallback) {
     return <h2>Carregando...</h2>;
   }
@@ -58,7 +67,7 @@ export default function Post({ post }: PostProps): JSX.Element {
             <FiUser size={20} />
             <span>{post.data?.author}</span>
             <FiClock />
-            <span>4 mins</span>
+            <span>{minutesReading}</span>
           </div>
           <div className={styles.contentContainer}>
             {post.data.content.map(item => (
@@ -97,12 +106,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: true,
   };
 };
-// export const getStaticPaths = async () => {
-//   const prismic = getPrismicClient();
-//   const posts = await prismic.query(TODO);
-
-//   // TODO
-// };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
@@ -116,6 +119,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     first_publication_date: response.first_publication_date ?? null,
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
       banner: {
         url: response.data.banner.url,
       },
