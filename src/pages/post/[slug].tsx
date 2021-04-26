@@ -3,6 +3,9 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
 import { useRouter } from 'next/router';
+import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
+import { format } from 'date-fns';
+import { useMemo } from 'react';
 import { getPrismicClient } from '../../services/prismic';
 import commonStyles from '../../styles/common.module.scss';
 import Header from '../../components/Header';
@@ -32,33 +35,40 @@ interface PostProps {
 export default function Post({ post }: PostProps): JSX.Element {
   const router = useRouter();
 
+  const formattedDate = useMemo(() => {
+    return format(new Date(post.first_publication_date), 'dd MMM yyyy');
+  }, [post.first_publication_date]);
+
   if (router.isFallback) {
-    return <h2>Loading...</h2>;
+    return <h2>Carregando...</h2>;
   }
 
   return (
     <>
       <Header />
-      <div>
+      <div className={styles.banner}>
         <img src={post.data.banner.url} alt={post.data.title} />
       </div>
-      <main>
-        <article>
+      <main className={commonStyles.container}>
+        <article className={styles.postContainer}>
+          <h1>{post.data.title}</h1>
           <div className={styles.info}>
-            <h1>TITLE</h1>
-            <time>15 march 2021</time>
-            <span>John Freitas</span>
+            <FiCalendar size={20} />
+            <time>{formattedDate}</time>
+            <FiUser size={20} />
+            <span>{post.data?.author}</span>
+            <FiClock />
             <span>4 mins</span>
           </div>
-          <div>
+          <div className={styles.contentContainer}>
             {post.data.content.map(item => (
               <div key={item.heading}>
                 {/* <h2>{item.heading}</h2> */}
                 <div
+                  className={styles.content}
                   dangerouslySetInnerHTML={{
                     __html: RichText.asHtml(item.body),
                   }}
-                  // className={styles.postContent}
                 />
               </div>
             ))}
@@ -72,13 +82,9 @@ export default function Post({ post }: PostProps): JSX.Element {
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
 
-  const posts = await prismic.query(
-    [Prismic.Predicates.at('document.type', 'posts')]
-    // {
-    //   fetch: ['post.uid'],
-    //   pageSize: 100,
-    // }
-  );
+  const posts = await prismic.query([
+    Prismic.Predicates.at('document.type', 'posts'),
+  ]);
 
   const paths = posts.results.map(post => ({
     params: {

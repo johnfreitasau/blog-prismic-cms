@@ -1,1 +1,58 @@
 // TODO
+.banner {
+  height: 25rem;
+  width: 100%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.postContainer {
+  margin-top: 5rem;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .info {
+    color: var(--body);
+    display: flex;
+    margin-top: 1.5rem;
+    align-items: center;
+
+    svg:not(:first-child) {
+      margin-left: 1.5rem;
+    }
+
+    span,
+    time {
+      margin-left: 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.contentContainer {
+  padding: 4.125rem 0;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--gray-100);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  .content {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--gray-100);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    text-align: justify;
+  }
+}

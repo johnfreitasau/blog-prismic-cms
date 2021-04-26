@@ -88,7 +88,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             className={styles.loadMoreButton}
             onClick={handleLoadMorePosts}
           >
-            Load more
+            Carregar mais posts
           </button>
         )}
       </div>
@@ -109,13 +109,8 @@ export const getStaticProps: GetStaticProps = async () => {
   const results = postsResponse.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        'eeee',
-        {
-          locale: ptBR,
-        }
-      ),
+      first_publication_date: post.first_publication_date,
+
       // first_publication_date: new Date(
       //   post.first_publication_date
       // ).toLocaleDateString('en-AU', {
